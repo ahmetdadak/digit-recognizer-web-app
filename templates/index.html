@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .buttonSubmit {
+            background-color: rgb(175, 76, 68);
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 28px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .buttonClear {
+            background-color: rgb(119, 113, 201);
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 28px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div align=center>
+        <h1 style="font-family: Georgia, 'Times New Roman', Times, serif">
+            Digit Recognizer
+        </h1>
+    </div>
+    <div align="center">
+        <canvas id="canvas" width="280" height="280" style="border:1px solid #000000; margin: 30px"></canvas>
+        <canvas id="canvas_display" width="280" height="280" style="border:1px solid #000000; margin: 30px"></canvas>
+    </div>
+    <div align="center">
+        <button class="buttonSubmit" id="save">SUBMIT</button>
+        <button class="buttonClear" onclick="erase()">CLEAR</button>
+        <!--<button onclick="display()">DISPLAY</button>-->
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <div align="center">
+        <a href="https://www.fenerbahce.org/fenerol">
+            <img src="static/fener_ol.jpg">
+        </a>
+    </div>
+    <script>
+
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext("2d");
+        var canvas_display = document.getElementById('canvas_display');
+        var ctx_display = canvas_display.getContext("2d");
+        var w = canvas.width;
+        var h = canvas.height;
+        var lastX = 0;
+        var lastY = 0;
+        var imageData;
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, w, h);
+
+
+        function erase(e) {
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, w, h);
+            ctx_display.clearRect(0, 0, w, h);
+        }
+
+
+
+        canvas.addEventListener('mousedown', function (e) {
+            this.down = true;
+            lastX = e.offsetX;
+            lastY = e.offsetY;
+        }, 0);
+
+        canvas.addEventListener('mousemove', function (e) {
+            if (this.down) {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
+                ctx.lineWidth = 20;
+                ctx.strokeStyle = "#000000";
+                ctx.stroke();
+                lastX = e.offsetX;
+                lastY = e.offsetY;
+            }
+        }, 0);
+
+        canvas.addEventListener('mouseup', function (e) {
+            this.down = false;
+        }, 0);
+
+        $(document).ready(function () {
+            $("#save").click(function () {
+                var imgURL = canvas.toDataURL();
+                $.ajax({
+                    type: "POST",
+                    url: "/foo",
+                    data: { 'data': imgURL },
+
+                    success: function (data) {
+                        if (data.result == "Draw Again!") {
+                            ctx_display.font = "50px Arial";
+                            var gradient = ctx_display.createLinearGradient(0, 0, canvas_display.width, 0);
+                            gradient.addColorStop("0", " darkblue");
+                            gradient.addColorStop("1.0", "yellow");
+                            // Fill with gradient
+                            ctx_display.fillStyle = gradient;
+                            ctx_display.textAlign = 'center';
+                            ctx_display.fillText(data.result, canvas_display.width / 2, canvas_display.height / 2);
+                        }
+                        else {
+                            ctx_display.font = "250px Arial";
+                            // Create gradient
+                            var gradient = ctx_display.createLinearGradient(0, 0, canvas_display.width, 0);
+                            gradient.addColorStop("0", " darkblue");
+                            gradient.addColorStop("1.0", "yellow");
+                            // Fill with gradient
+                            ctx_display.fillStyle = gradient;
+                            ctx_display.textAlign = 'center';
+                            ctx_display.fillText(data.result, canvas_display.width / 2, canvas_display.height * 4 / 5);
+                        } ctx_display.font = "250px Arial";
+                        // Create gradient
+
+
+                    }
+                });
+            });
+        });
+
+
+
+    </script>
+
+</body>
+
+</html>
