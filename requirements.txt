@@ -42,6 +42,7 @@ termcolor==1.1.0
 text-unidecode==1.3
 tqdm==4.41.1
 typed-ast==1.4.0
+UniCurses==1.2
 urllib3==1.24.3
 Werkzeug==0.16.0
 wrapt==1.11.2
