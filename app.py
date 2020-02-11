@@ -3,20 +3,17 @@ from flask import request
 import numpy as np
 from PIL import Image
 import base64
-from io import BytesIO
+from io import BytesIO     
 from io import StringIO
 from PIL import Image
 from flask import jsonify
-import preprocessing as prep
+import preprocessing as prep 
 from keras.models import load_model
 
 import pandas as pd
 import numpy as np
-#import matplotlib.pyplot as plt
-#import matplotlib.image as mpimg
-#import seaborn as sns
 import os
-#from sklearn.metrics import confusion_matrix
+
 import itertools
 
 from keras.models import Sequential
@@ -31,7 +28,7 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route('/foo', methods=['POST'])
+@app.route('/foo', methods=['POST'])  
 def foo():
     if request.method == "POST":
         K.clear_session()
@@ -39,14 +36,14 @@ def foo():
         data = request.form["data"]
         encoded_data = data.split(',')[1]
         img = base64.b64decode(encoded_data)
-        filename = 's.png'
+        filename = 's.png'  
         with open(filename, 'wb') as f:
                 f.write(img)
         img = Image.open(filename).convert('L')
         nparray = np.array(img)
         nparray2 = np.abs(255-nparray)
         number = process(nparray2)
-
+        
         return jsonify(result=number)
 
 def process(image_array):
@@ -75,7 +72,7 @@ def process(image_array):
 
 
 
-@app.route('/display', methods=['POST'])
+@app.route('/display', methods=['POST'])  
 def display():
     number = 1
     return jsonify(result=number )
